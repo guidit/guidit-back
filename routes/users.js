@@ -5,15 +5,25 @@ var mysql_connection = require('./mysql.js');
 var fs = require('fs');
 var jsonFile = require('jsonfile');
 
-//console.log(mysql_connection.forconnection());
 var sqlconnection = mysql.createConnection( mysql_connection.forconnection() );
 
+
+/* GET users listing. */
+router.get('/', function(req, res, next) {
+  res.send('respond with a resource');
+});
+
+
 /*json to mysql*/
+/*
 router.get('/tomysql',function(req,res){
+    var filenumber = req.query['number'];
+    var filenames = ['./busan.json','./deogu.json','./incheon.json','./junlanam.json','./chungcheongbuk.json','./chungcheongnam.json','./deojeon.json','./gwangju.json','./jeoju.json','./junlabuk.json','./kangwon.json','./kyeongky.json','./kyeongsangbuk.json','./kyeongsangnam.json','./seojong.json','./seoul.json','./ulsan.json']
+
+    for(var jj=0;jj<17;jj++){
     var i=0;
 
     var category = 'A';// A is sight, B is hotel, C is food, D is truck
-    //var contentid = 0;
     var image = '';
     var mapx = 0;
     var mapy = 0;
@@ -23,8 +33,10 @@ router.get('/tomysql',function(req,res){
 
     var isFinish = 0;
     var isSkip = false;
+   
+    var filename = filenames[filenumber];
 
-    jsonFile.readFile('./ulsan.json','utf8',function(err,data){
+    jsonFile.readFile(filename,'utf8',function(err,data){
         if(err){
             console.log(err);
             res.json(err);
@@ -87,9 +99,10 @@ router.get('/tomysql',function(req,res){
                 if(items[i].zipcod != null) information += '%zipcode='+items[i].zipcode+'%';
 
                 if(items[i].firstimage == null) {
-                    insert_query = 'insert into sight (name,location,type,information) values ("'+name+'","('+mapx+','+mapy+')","'+category+'","'+information+'")';
+                    insert_query = 'insert into sight (name,location,type,information,locationX,locationY) values ("'+name+'","('+mapx+','+mapy+')","'+category+'","'+information+'","'+mapx+'","'+mapy+'")';
                 }else {
-                    insert_query = 'insert into sight (name,location,type,information,picture) values ("'+name+'","('+mapx+','+mapy+')","'+category+'","'+information+'","'+image+'")';
+                    image = items[i].firstimage;
+                    insert_query = 'insert into sight (name,location,type,information,picture,locationX,locationY) values ("'+name+'","('+mapx+','+mapy+')","'+category+'","'+information+'","'+image+'","'+mapx+'","'+mapy+'")';
                 }
                 sqlconnection.query(insert_query,function(err,result){
                         if(err){
@@ -98,22 +111,15 @@ router.get('/tomysql',function(req,res){
                         }else{
                             isFinish++;
                             if(numberofitem == isFinish){
-                            res.jsonp("success");
+                                res.jsonp("success");
                             }    
                         }
                 })
             }
         }
     });
-
-    //res.jsonp("success");
 });
-
-
-/* GET users listing. */
-router.get('/', function(req, res, next) {
-  res.send('respond with a resource');
-});
+*/
 
 /* change the information of account */
 router.get('/setting', function(req,res){
