@@ -18,7 +18,8 @@ router.get('/create',function(req,res){
     var milliseconds = new Date().getTime();
 
     if(city<1 || city>8){
-        res.jsonp({"issuccess":"false"});
+        if(city=-1){}
+        else { res.jsonp({"isSuccess":"false"}); }
     }
     else{
         var insert_query = 'insert into feed (content,city,date,user_id) values ("'+content+'","'+city+'","'+milliseconds+'","'+id+'")';
@@ -29,12 +30,32 @@ router.get('/create',function(req,res){
                 res.jsonp(err);
             }
             else{
-                res.jsonp({"issuccess":"true"});
+                res.jsonp({"isSuccess":"true"});
             }
         });
     }
 });
 
+router.get('/delete',function(req,res){
+    
+    var id = req.query['id'];
+
+    var delete_query = 'delete from feed where id="'+id+'"';
+
+    sqlconnection.query(delete_query, function(err,result){
+        if(err){
+            console.log(err);
+            res.jsonp(err);
+        }
+        else{
+            if(result.affectedRows == 0){
+                res.jsonp({"isSuccess":"false"});
+            }else{
+                res.jsonp({"isSuccess":"true"});
+            }
+        }
+    });    
+});
 /*
 router.get('/list',function(req,res){
 
