@@ -80,5 +80,51 @@ router.get('/detail',function(req,res){
     });
 });
 
+router.get('/favorite',function(req,res){
+    var user_id = req.query['userId'];
+    var sight_id = req.query['sightId'];
+    var favorite = req.query['favorite'];
+
+    var milliseconds = new Date().getTime();
+
+    if(favorite=="true"){
+        var find_query = 'select * from favorite where sight_id='+sight_id+' and user_id='+user_id;
+        var insert_query = 'insert into favorite (date,sight_id,user_id) values ('+milliseconds+','+sight_id+','+user_id+')';
+        
+        sqlconnection.query(find_query, function(err,result){
+            if(err){
+                console.log(err);
+                res.jsonp(err);
+            }else{
+                if(result.length==0){
+                    sqlconnection.query(insert_query, function(err,result){
+                        if(err){
+                            console.log(err);
+                            res.jsonp(err);
+                        }else{
+                            res.jsonp({"isSuccess":"true"});
+                        }
+                    })
+                }else{
+                    res.jsonp({"isSuccess":"false"});
+                }
+            }
+        });
+    }
+    else{
+        var delete_query = 'delete from favorite where user_id='+user_id+' and sight_id='+sight_id;
+
+        sqlconnection.query(delete_query, function(err,result){
+            if(err){
+                console.log(err);
+                res.jsonp(err);
+            }else{
+                if( result.affectedRows == 0 ){ res.jsonp({"isSuccess":"false"});}
+                else { res.jsonp({"isSuccess":"true"}); }
+            }
+        });
+    }
+});
+
 
 module.exports = router;
