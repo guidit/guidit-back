@@ -44,22 +44,40 @@ router.get('/sight',function(req,res){
     });
 });
 
-router.get('/test',function(req,res){
+/* detail sight information */
+router.get('/detail',function(req,res){
+    var user_id = req.query['userId'];
+    var sight_id = req.query['sightId'];
+    var favorite = false;
+    var find_query = 'select id,name,picture,score,information from sight where id='+sight_id;
+    var favorite_check_query = 'select id from favorite where sight_id='+sight_id+' and user_id='+user_id;
 
-    sqlconnection.query('select picture from sight where locationX=127.0054853',function(err,result){
+    sqlconnection.query(favorite_check_query, function(err,result){
         if(err){
             console.log(err);
             res.jsonp(err);
         }
         else{
-            if(result.length == 0) {
-                res.jsonp([{'id':-1}]);
-            }
-            else {
-                console.log(result);
-                res.jsonp(result);
-            }
-        }    
+            if(result.length==0){ favorite = false; }
+            else{ favorite = true; }
+
+            sqlconnection.query(find_query, function(err,result1){
+                if(err){
+                    console.log(err);
+                    res.jsonp(err);
+                }
+                else{
+                    if(result1.length == 0){
+                        res.jsonp([{'id':-1}]);
+                    }
+                    else{
+                        var sight_information = result1[0];
+                        sight_information['favorite'] = favorite;
+                        res.jsonp(sight_information); 
+                    }
+                }
+            });
+        }
     });
 });
 

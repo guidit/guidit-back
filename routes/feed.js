@@ -10,16 +10,16 @@ router.get('/', function(req, res, next) {
     res.send('respond with a resource');
 });
 
-router.get('/create',function(req,res){
+router.post('/create',function(req,res){
 
-    var id = req.query['id'];
-    var content = req.query['content'];
-    var city = req.query['city'];
+    var id = Number(req.body.id);
+    var content = req.body.content;
+    var city = Number(req.body.city);
     var milliseconds = new Date().getTime();
-
-    if(city<1 || city>8){
-        if(city=-1){}
-        else { res.jsonp({"isSuccess":"false"}); }
+    console.log(req.body);
+    console.log(req.body.id+" "+req.body.content+" "+req.body.city);
+    if(city<0 || city>8){
+        res.jsonp({"isSuccess":"false"});
     }
     else{
         var insert_query = 'insert into feed (content,city,date,user_id) values ("'+content+'","'+city+'","'+milliseconds+'","'+id+'")';
@@ -65,7 +65,7 @@ router.get('/list',function(req,res){
         res.jsonp({"issuccess":"false"});
     }
     else{
-        var find_query = "select 
+        var find_query = 'select from 
     }
 });
 */
