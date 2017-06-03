@@ -56,19 +56,67 @@ router.get('/delete',function(req,res){
         }
     });    
 });
-/*
+
 router.get('/list',function(req,res){
 
-    var city = req.query['city'];
+    var city = Number(req.query['city']);
 
-    if(city<1 || city>8){
+    if(city<0 || city>8){
         res.jsonp({"issuccess":"false"});
     }
     else{
-        var find_query = 'select from 
+        var find_query= '';
+        if(city!=0){
+            find_query = 'select feed.id,feed.city,feed.content,feed.date,feed.user_id,user.name,user.profile from feed left join user on feed.user_id = user.id where feed.city = '+city;
+        }else{
+            find_query = 'select feed.id,feed.city,feed.content,feed.date,feed.user_id,user.name,user.profile from feed left join user on feed.user_id = user.id';
+        }
+        
+        sqlconnection.query(find_query, function(err,result){
+            if(err){
+                console.log(err);
+                res.jsonp(err);
+            }
+            else{
+                    res.jsonp(result);
+            }
+        });
     }
 });
-*/
+
 
 module.exports = router;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

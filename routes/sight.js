@@ -27,7 +27,6 @@ router.get('/sight',function(req,res){
     var find_query = 'select id,name,type,picture,score,locationX,locationY from sight '
     find_query += 'where locationX between '+xmin+' and '+xmax+' and locationY between '+ymin+' and '+ymax;
 
-    console.log(find_query);
     sqlconnection.query(find_query, function(err,result){
         if(err){
             console.log(err);
@@ -73,7 +72,7 @@ router.get('/detail',function(req,res){
                     else{
                         var sight_information = result1[0];
                         sight_information['favorite'] = favorite;
-                        res.jsonp(sight_information); 
+                        res.jsonp([sight_information]); 
                     }
                 }
             });
