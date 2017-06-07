@@ -21,6 +21,9 @@ router.get('/delete',function(req,res){
             res.jsonp(err);
         }
         else{
+            if(result.affectedRows == 0){
+                res.jsonp({"isSuccess":"false"});
+            }else { res.jsonp({"isSuccess":"true"}) }
         }
     });
 
