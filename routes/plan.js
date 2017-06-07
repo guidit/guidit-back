@@ -175,13 +175,38 @@ router.get('/detail',function(req,res){
 });
 
 router.get('/list',function(req,res){
-
+    
     // to do;
 });
 
 router.post('/review',function(req,res){
+    
+    var daily_plan_id = req.body.id;
+    var review = req.body.review;
+    var picture = req.body.file;
 
-    // to do;
+    var update_query = '';
+
+    if(review==null){
+        update_query = 'update daily_plan set picture="'+picture+'" where id='+Number(daily_plan_id);
+    }else if(picture==null){
+        update_query = 'update daily_plan set review ="'+review+'" where id='+Number(daily_plan_id);
+    }else{
+        update_query = 'update daily_plan set review ="'+review+'", picture ="'+picture+'" where id='+Number(daily_plan_id);
+    }
+
+    sqlconnection.query(update_query,function(err,result){
+        if(err){
+            console.log(err);
+            res.jsonp(err);
+        }else{
+            if(result.length==0){
+                res.jsonp({"isSuccess":"false"});
+            }else{
+                res.jsonp({"isSuccess":"true"});
+            }
+        }
+    });
 });
 
 
