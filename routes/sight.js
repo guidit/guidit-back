@@ -4,6 +4,7 @@ var mysql = require('mysql');
 var mysql_connection = require('./mysql.js');
 var fs = require('fs');
 var jsonFile = require('jsonfile');
+var async = require('async');
 
 var sqlconnection = mysql.createConnection( mysql_connection.forconnection() );
 
@@ -47,10 +48,65 @@ router.get('/sight',function(req,res){
 router.get('/detail',function(req,res){
     var user_id = req.query['userId'];
     var sight_id = req.query['sightId'];
-    var favorite = false;
     var find_query = 'select id,name,picture,score,information from sight where id='+sight_id;
     var favorite_check_query = 'select id from favorite where sight_id='+sight_id+' and user_id='+user_id;
+    var score_find_query = 'select score from sight_score where sight_id='+sight_id+' and user_id='+user_id;
 
+    async.waterfall([
+        function(callback){
+            sqlconnection.query(favorite_check_query, function(err,result){
+                if(err){
+                    console.log(err);
+                    res.jsonp(err);
+                }
+                else{
+                    var favorite = false;
+                    if(result.length==0){ callback(null,false); }
+                    else{ callback(null,true); }
+                }
+            });
+        },function(favorite,callback){
+            sqlconnection.query(score_find_query, function(err,result){
+                if(err){
+                    console.log(err);
+                    res.jsonp(err);
+                }
+                else{
+                    console.log(result);
+                    if(result.length == 0) { callback(null,favorite,-1) }
+                    else{ callback(null,favorite,result[0].score); }
+                }
+            });
+        },function(favorite,score,callback){
+            sqlconnection.query(find_query, function(err,result1){
+                if(err){
+                    console.log(err);
+                    res.jsonp(err);
+                }
+                else{
+                    console.log(score);
+                    if(result1.length == 0){
+                        res.jsonp([{'id':-1}]);
+                    }
+                    else{
+                        var sight_information = result1[0];
+                        sight_information['favorite'] = favorite;
+                        sight_information['myScore'] = score;
+                        callback(null,[sight_information]);
+                    }
+                }
+            });
+        }
+    ], function(err,sight_information){
+        if(err){console.log(err)}
+        else {
+            res.jsonp(sight_information);
+        }
+    });
+
+
+
+/*
     sqlconnection.query(favorite_check_query, function(err,result){
         if(err){
             console.log(err);
@@ -78,6 +134,7 @@ router.get('/detail',function(req,res){
             });
         }
     });
+*/
 });
 
 router.get('/favorite',function(req,res){

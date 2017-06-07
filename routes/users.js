@@ -4,9 +4,8 @@ var mysql = require('mysql');
 var mysql_connection = require('./mysql.js');
 var fs = require('fs');
 var jsonFile = require('jsonfile');
-
 var sqlconnection = mysql.createConnection( mysql_connection.forconnection() );
-
+var multer = require('multer');
 
 /* GET users listing. */
 router.get('/', function(req, res, next) {
@@ -121,15 +120,29 @@ router.get('/tomysql',function(req,res){
 });
 */
 
+
 /* change the information of account */
-router.get('/setting', function(req,res){
-    var id = req.query['id'];
-    var name = req.query['name'];
-    var password = req.query['password'];
+router.post('/setting', function(req,res,next){
+    var id = req.body.id;
+    var name = req.body.name;
+    var password = req.body.password;
+    var file = req.body.file;
     var update_query = "";
     
-    if(password == null) update_query = "update user set name = '"+name+"' where id = "+id;
-    else update_query = "update user set name = '"+name+"', password = '"+password+"' where id = "+id;
+    if(password == null) {
+        if(file == null){
+            update_query = "update user set name = '"+name+"' where id = "+id;
+        } else{
+            update_query = "update user set name = '"+name+"', profile = '"+file+"' where id = "+id;
+        }
+    }
+    else {
+        if(file == null){
+            update_query = "update user set name = '"+name+"', password = '"+password+"' where id = "+id;
+        }else{
+            update_query = "update user set name = '"+name+"', password = '"+password+"', profile = '"+file+"' where id = "+id;
+        }
+    }
 
     sqlconnection.query(update_query,function(err,result){
         if(err){
@@ -145,13 +158,13 @@ router.get('/setting', function(req,res){
             }
 
         }
-    })
-
+    });
 });
 
 
 /* Login */
 router.get('/login',function(req,res){
+
     var user_id = req.query['id'];
     var password = req.query['password'];
     var find_query = 'select id,user_id,name,profile from user where user_id='+mysql.escape(user_id)+' and password='+mysql.escape(password);    
@@ -170,21 +183,22 @@ router.get('/login',function(req,res){
             }
         }
     });
+
 });
 
 /* Sign up */
-router.get('/signup',function(req,res){
-    var name = req.query['name'];
-    var user_id = req.query['id'];
-    var password = req.query['password'];
-    var insert_query = 'insert into user (user_id,password,name,profile) values ("'+user_id+'","'+password+'","'+name+'","testprofile")';
+router.post('/signup',function(req,res){
+    var name = req.body.name;
+    var user_id = req.body.id;
+    var password = req.body.password;
+    var file = req.body.file;
+    var insert_query = 'insert into user (user_id,password,name,profile) values ("'+user_id+'","'+password+'","'+name+'","'+file+'")';
     sqlconnection.query(insert_query, function(err,result){
         if(err){ 
             console.log(err);
             res.jsonp(err);
         }
         else{
-            console.log(result);
             res.jsonp({'isSuccess':'true'});
         }
     });
