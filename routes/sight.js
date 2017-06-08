@@ -316,6 +316,24 @@ router.post('/commentcreate',function(req,res){
 
 });
 
+router.get('/commentlist',function(req,res){
+    var sight_id = Number(req.query['sightId']);
+
+    var find_query = 'select C.id,U.profile,U.user_id,C.comment,C.date from sight_comment C left join user U on C.user_id=U.id where C.sight_id='+sight_id;
+
+    sqlconnection.query(find_query, function(err,result){
+        if(err){
+            console.log(err);
+            res.jsonp(err);
+        }else{
+            if(result.length == 0){
+                res.jsonp([{"id":-1}]);
+            }
+            else { res.jsonp(result); }
+        }
+    });
+
+});
 
 
 
