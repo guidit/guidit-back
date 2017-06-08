@@ -96,6 +96,28 @@ router.post('/modify',function(req,res){
     // to do;
 });
 
+router.get('/addcount',function(req,res){
+    var plan_id = Number(req.query['id']);
+
+    var update_query = 'update plan set view_count = view_count+1 where id='+plan_id;
+
+    sqlconnection.query(update_query,function(err,result){
+        if(err){
+            console.log(err);
+            res.jsonp(err);
+        }else{
+            if(result.affectedRows == 0){
+                res.jsonp({"isSuccess":"false"});
+            }else{
+                res.jsonp({"isSuccess":"true"});
+            }
+        }
+    });
+    
+});
+
+
+
 router.get('/detail',function(req,res){
     var plan_id = req.query['id'];
 
@@ -208,6 +230,7 @@ router.post('/review',function(req,res){
         }
     });
 });
+
 
 
 module.exports = router;
