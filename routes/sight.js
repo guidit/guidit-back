@@ -301,7 +301,7 @@ router.post('/commentcreate',function(req,res){
     var sight_id = Number(req.body.sightId);
     var comment = req.body.comment;
 
-    var milliseconds = new Date().getTime();
+    var milliseconds = req.body.date;
 
     var insert_query = 'insert into sight_comment(comment,date,sight_id,user_id) values("'+comment+'","'+milliseconds+'",'+sight_id+','+user_id+')';
 

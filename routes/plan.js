@@ -198,7 +198,73 @@ router.get('/detail',function(req,res){
 
 router.get('/list',function(req,res){
     
-    // to do;
+    var user_id = Number(req.query['id']);
+    
+    async.waterfall([
+        function(callback){
+            var find_query =''
+            if(user_id == 0){
+                find_query = 'select p.id,p.name,p.is_public,p.view_count from plan p';
+            }else {
+                find_query = 'select p.id,p.name,p.is_public,p.view_count from plan p where user_id='+user_id;
+            }
+
+            sqlconnection.query(find_query,function(err,result){
+                if(err){
+                    console.log(err);
+                    res.jsonp(err);
+                }else{
+                    if(result.length==0){
+                        res.jsonp([{"id":-1}]);
+                    }else{
+                        callback(null,result);
+                    }
+                }
+            });
+        },
+        function(plans,callback){
+            var count = 0;
+            var public_true = [];
+            if(user_id == 0){
+                for(var i=0;i<plans.length;i++){
+                    var find_query = 'select review from daily_plan where plan_id='+plans[i].id;
+                    sqlconnection.query(find_query,function(err,result){
+                        if(err){
+                            console.log(err);
+                            res.jsonp(err);
+                        }else{
+                            if(result.length == 0) { count++; }
+                            else{
+                                var ispublic = false;
+                                for(var count2=0;count2<result.length;count2++){
+                                    if(result[count2].review != null) { 
+                                        ispublic=true;
+                                        break;
+                                    }
+                                }
+                                if(ispublic ==true){
+                                    public_true.push(plans[count]);
+                                }
+                                count++;
+                                if(count == plans.length){
+                                    callback(null,public_true);
+                                }
+                            }
+                        }
+                    });
+                }
+            }else{
+                callback(null,plans);
+            }
+        }
+    ],function(err,result){
+        if(err){ console.log(err); }
+        else {
+            res.jsonp(result);
+        }
+    }
+    )
+
 });
 
 router.post('/review',function(req,res){
