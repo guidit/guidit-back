@@ -296,5 +296,27 @@ router.get('/score',function(req,res){
     });
 });
 
+router.post('/commentcreate',function(req,res){
+    var user_id = Number(req.body.userId);
+    var sight_id = Number(req.body.sightId);
+    var comment = req.body.comment;
+
+    var milliseconds = new Date().getTime();
+
+    var insert_query = 'insert into sight_comment(comment,date,sight_id,user_id) values("'+comment+'","'+milliseconds+'",'+sight_id+','+user_id+')';
+
+    sqlconnection.query(insert_query, function(err,result){
+        if(err){
+            console.log(err);
+            res.jsonp(err);
+        }else{
+            res.jsonp({"isSuccess":"true"});
+        }
+    });
+
+});
+
+
+
 
 module.exports = router;
