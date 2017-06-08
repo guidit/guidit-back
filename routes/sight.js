@@ -258,14 +258,14 @@ router.get('/score',function(req,res){
                 if(err){
                     console.log(err);
                     res.jsonp(err);
-                }else{console.log(result);
+                }else{
                     if(result.affectedRows==0) callback(null,0);
                     else callback(null,1);
                 }
             });
  
         },function(isExist,callback){
-            if(isExist==0){console.log("in1");
+            if(isExist==0){
                 var insert_query = 'insert into sight_score(score,sight_id,user_id) values('+score+','+sight_id+','+user_id+')';
                 sqlconnection.query(insert_query, function(err,result){
                     if(err){
@@ -284,7 +284,7 @@ router.get('/score',function(req,res){
                 if(err){
                     console.log(err);
                     res.jsonp(err);
-                }else{console.log("in2");
+                }else{
                     var sum = 0.0;
                     for(var i=0;i<result.length;i++){
                         sum +=result[i].score;    
