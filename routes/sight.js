@@ -332,8 +332,27 @@ router.get('/commentlist',function(req,res){
             else { res.jsonp(result); }
         }
     });
-
 });
+
+router.get('/favoritelist',function(req,res){
+
+    var user_id = Number(req.query['id']);
+
+    var find_query = 'select F.sight_id,S.name,S.information,S.picture,S.locationX,S.locationY from favorite F left join sight S on F.sight_id=S.id where F.user_id='+user_id;
+
+    sqlconnection.query(find_query, function(err,result){
+        if(err){
+            console.log(err);
+            res.jsonp(err);
+        }else{
+            if(result.length == 0){
+                res.jsonp([{"id":-1}]);
+            }
+            else { res.jsonp(result); }
+        }
+    });
+});
+
 
 
 
