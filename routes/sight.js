@@ -245,12 +245,56 @@ router.get('/foodtruck',function(req,res){
             }
         }
     });
-
-
-
 });
 
+router.get('/score',function(req,res){
 
+    var user_id = Number(req.query['userId']);
+    var sight_id = Number(req.query['sightId']);
+    var score = Number(req.query['myScore']);
+
+    async.waterfall([
+        function(callback){
+            var insert_query = 'insert into sight_score(score,sight_id,user_id) values('+score+','+sight_id+','+user_id+')';
+            sqlconnection.query(insert_query, function(err,result){
+                if(err){
+                    console.log(err);
+                    res.jsonp(err);
+                }else{
+                    callback(null,result);
+                }
+            });
+        },function(res,callback){
+            var find_query = 'select score from sight_score where sight_id='+sight_id;
+            sqlconnection.query(find_query, function(err,result){
+                if(err){
+                    console.log(err);
+                    res.jsonp(err);
+                }else{
+                    var sum = 0.0;
+                    for(var i=0;i<result.length;i++){
+                        sum +=result[i].score;    
+                    }
+                    var average = (sum / result.length).toPrecision(2);
+                    var update_query = 'update sight set score='+average+' where id='+sight_id;
+                    sqlconnection.query(update_query, function(err,result){
+                        if(err){
+                            console.log(err);
+                            res.jsonp(err);
+                        }else{
+                            callback(null,result);
+                        }
+                    });
+                }
+            });
+        }
+    ], function(err, result){
+        if(err) {console.log(err)}
+        else {
+            res.jsonp({"isSuccess":"true"});
+        }
+    });
+});
 
 
 module.exports = router;
