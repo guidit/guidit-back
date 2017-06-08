@@ -16,8 +16,6 @@ router.post('/create',function(req,res){
     var content = req.body.content;
     var city = Number(req.body.city);
     var milliseconds = new Date().getTime();
-    console.log(req.body);
-    console.log(req.body.id+" "+req.body.content+" "+req.body.city);
     if(city<0 || city>8){
         res.jsonp({"isSuccess":"false"});
     }

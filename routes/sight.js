@@ -72,7 +72,6 @@ router.get('/detail',function(req,res){
                     res.jsonp(err);
                 }
                 else{
-                    console.log(result);
                     if(result.length == 0) { callback(null,favorite,-1) }
                     else{ callback(null,favorite,result[0].score); }
                 }
@@ -84,7 +83,6 @@ router.get('/detail',function(req,res){
                     res.jsonp(err);
                 }
                 else{
-                    console.log(score);
                     if(result1.length == 0){
                         res.jsonp([{'id':-1}]);
                     }
@@ -255,22 +253,38 @@ router.get('/score',function(req,res){
 
     async.waterfall([
         function(callback){
-            var insert_query = 'insert into sight_score(score,sight_id,user_id) values('+score+','+sight_id+','+user_id+')';
-            sqlconnection.query(insert_query, function(err,result){
+            var find_query = 'update sight_score set score='+score+' where sight_id='+sight_id+' and user_id='+user_id;
+            sqlconnection.query(find_query, function(err,result){
                 if(err){
                     console.log(err);
                     res.jsonp(err);
-                }else{
-                    callback(null,result);
+                }else{console.log(result);
+                    if(result.affectedRows==0) callback(null,0);
+                    else callback(null,1);
                 }
             });
+ 
+        },function(isExist,callback){
+            if(isExist==0){console.log("in1");
+                var insert_query = 'insert into sight_score(score,sight_id,user_id) values('+score+','+sight_id+','+user_id+')';
+                sqlconnection.query(insert_query, function(err,result){
+                    if(err){
+                        console.log(err);
+                        res.jsonp(err);
+                    }else{
+                        callback(null,result);
+                    }
+                });
+            }else {
+                callback(null,null);
+            }
         },function(res,callback){
             var find_query = 'select score from sight_score where sight_id='+sight_id;
             sqlconnection.query(find_query, function(err,result){
                 if(err){
                     console.log(err);
                     res.jsonp(err);
-                }else{
+                }else{console.log("in2");
                     var sum = 0.0;
                     for(var i=0;i<result.length;i++){
                         sum +=result[i].score;    

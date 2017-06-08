@@ -34,7 +34,9 @@ router.get('/delete',function(req,res){
 router.post('/create',function(req,res){
     var name = req.body.name;
     var user_id = Number(req.body.id);
-    var is_public = req.body.is_public;
+    var is_public=0;
+    if(req.body.is_public == true) is_public=0;
+    else is_public=1;
     var daily_plan = req.body.daily_plan;
     var insert_query = '';
     var insert_query2 = '';
@@ -129,6 +131,7 @@ router.get('/detail',function(req,res){
                     console.log(err);
                     res.jsonp(err);
                 }else{
+                    if(result.length == 0) res.jsonp({"id":-1});
                     callback(null,result[0]);
                 }
             });
@@ -152,7 +155,7 @@ router.get('/detail',function(req,res){
             }
             else{
                 for(var i=0;i<daily_plan.length;i++){
-                    var find_query = 'select * from daily_to_sight where daily_plan_id='+Number(daily_plan[i].id);
+                    var find_query = 'select d.daily_plan_id,d.sight_id,s.name from daily_to_sight d left join sight s on d.sight_id=s.id where daily_plan_id='+Number(daily_plan[i].id);
                     sqlconnection.query(find_query,function(err,result){
                         if(err){
                             console.log(err);
@@ -168,7 +171,7 @@ router.get('/detail',function(req,res){
                                 }
                             }else{
                                 for(var count2=0;count2<result.length;count2++){
-                                    sightlist.push({"id":result[count2].sight_id});
+                                    sightlist.push({"id":result[count2].sight_id,"name":result[count2].name});
                                     if(count2 == result.length-1){
                                         daily_planlist.push({"id":daily_plan[count].id,"day_num":daily_plan[count].day_num,"review":daily_plan[count].review,"picture":daily_plan[count].picture,"sight_list":sightlist})
                                         count++;
@@ -215,7 +218,7 @@ router.get('/list',function(req,res){
                     res.jsonp(err);
                 }else{
                     if(result.length==0){
-                        res.jsonp([{"id":-1}]);
+                        res.jsonp([]);
                     }else{
                         callback(null,result);
                     }
@@ -242,7 +245,7 @@ router.get('/list',function(req,res){
                                         break;
                                     }
                                 }
-                                if(ispublic ==true){
+                                if(ispublic ==true && plans[count].is_public==1){
                                     public_true.push(plans[count]);
                                 }
                                 count++;
