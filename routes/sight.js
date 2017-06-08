@@ -183,5 +183,74 @@ router.get('/favorite',function(req,res){
     }
 });
 
+router.post('/foodtruckcreate',function(req,res){
+    var user_id = req.body.user_id;
+    var name = req.body.name;
+    var location_ = req.body.location;
+    var information = req.body.description;
+    var picture = req.body.file;
+
+    var insert_query = 'insert into foodtruck (user_id,name,picture,information,location) values('+Number(user_id)+',"'+name+'","'+picture+'","'+information+'","'+location_+'")';
+
+    sqlconnection.query(insert_query, function(err,result){
+        if(err){
+            console.log(err);
+            res.jsonp(err);
+        }else{
+            res.jsonp({"isSuccess":"true"});
+        }
+    });
+});
+
+router.post('/foodtrucksetting',function(req,res){
+    var truck_id = req.body.id;
+    var name = req.body.name;
+    var location_ = req.body.location;
+    var information = req.body.description;
+    var picture = req.body.file;
+
+    if(picture == null){
+        var update_query = 'update foodtruck set name="'+name+'", information="'+information+'", location="'+location_+'" where id='+Number(truck_id);
+    }else{
+        var update_query = 'update foodtruck set name="'+name+'", picture="'+picture+'", information="'+information+'", location="'+location_+'" where id='+Number(truck_id);
+    }
+    sqlconnection.query(update_query, function(err,result){
+        if(err){
+            console.log(err);
+            res.jsonp(err);
+        }else{
+            if(result.affectedRows == 0) {
+                res.jsonp({"isSuccess":"false"});
+            }else{
+                res.jsonp({"isSuccess":"true"});
+            }
+        }
+    });
+});
+
+router.get('/foodtruck',function(req,res){
+    var user_id = req.query['id'];
+
+    var find_query = 'select * from foodtruck where user_id='+Number(user_id);
+    
+    sqlconnection.query(find_query, function(err,result){
+        if(err){
+            console.log(err);
+            res.jsonp(err);
+        }else{
+            if(result.length == 0) {
+                res.jsonp({"id":-1});
+            }else{
+                res.jsonp(result[0]);
+            }
+        }
+    });
+
+
+
+});
+
+
+
 
 module.exports = router;
