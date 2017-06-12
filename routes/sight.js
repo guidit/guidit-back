@@ -1,3 +1,12 @@
+/******************************************************/
+/*              2017 First semester                   */
+/*      Database Final Project 'Guidit' Back-End      */
+/*    Made By Sohwan Park (github.com/bleetoteelb)    */
+/*         Last modification  2017.06.12              */
+/******************************************************/
+/*                  Sight Routers                     */
+/******************************************************/
+
 var express = require('express');
 var router = express.Router();
 var mysql = require('mysql');
@@ -9,13 +18,13 @@ var async = require('async');
 var sqlconnection = mysql.createConnection( mysql_connection.forconnection() );
 
 
-/* GET users listing. */
+/* Respond default setting */
 router.get('/', function(req, res, next) {
     res.send('respond with a resource');
 });
 
 
-/* return sight*/
+/* Return sights */
 router.get('/sight',function(req,res){
     var locationX = Number(req.query['X']);
     var locationY = Number(req.query['Y']);
@@ -44,7 +53,7 @@ router.get('/sight',function(req,res){
     });
 });
 
-/* detail sight information */
+/* Return detail sight information */
 router.get('/detail',function(req,res){
     var user_id = req.query['userId'];
     var sight_id = req.query['sightId'];
@@ -101,40 +110,9 @@ router.get('/detail',function(req,res){
             res.jsonp(sight_information);
         }
     });
-
-
-
-/*
-    sqlconnection.query(favorite_check_query, function(err,result){
-        if(err){
-            console.log(err);
-            res.jsonp(err);
-        }
-        else{
-            if(result.length==0){ favorite = false; }
-            else{ favorite = true; }
-
-            sqlconnection.query(find_query, function(err,result1){
-                if(err){
-                    console.log(err);
-                    res.jsonp(err);
-                }
-                else{
-                    if(result1.length == 0){
-                        res.jsonp([{'id':-1}]);
-                    }
-                    else{
-                        var sight_information = result1[0];
-                        sight_information['favorite'] = favorite;
-                        res.jsonp([sight_information]); 
-                    }
-                }
-            });
-        }
-    });
-*/
 });
 
+/* Update favorite status */
 router.get('/favorite',function(req,res){
     var user_id = req.query['userId'];
     var sight_id = req.query['sightId'];
@@ -181,6 +159,7 @@ router.get('/favorite',function(req,res){
     }
 });
 
+/* Add information of foodtruck to DB */
 router.post('/foodtruckcreate',function(req,res){
     var user_id = req.body.user_id;
     var name = req.body.name;
@@ -200,6 +179,7 @@ router.post('/foodtruckcreate',function(req,res){
     });
 });
 
+/* Modify the information of foodtruck */
 router.post('/foodtrucksetting',function(req,res){
     var truck_id = req.body.id;
     var name = req.body.name;
@@ -226,9 +206,9 @@ router.post('/foodtrucksetting',function(req,res){
     });
 });
 
+/* Return the foodtruck information */
 router.get('/foodtruck',function(req,res){
     var user_id = req.query['id'];
-
     var find_query = 'select * from foodtruck where user_id='+Number(user_id);
     
     sqlconnection.query(find_query, function(err,result){
@@ -245,6 +225,7 @@ router.get('/foodtruck',function(req,res){
     });
 });
 
+/* Update sight score */
 router.get('/score',function(req,res){
 
     var user_id = Number(req.query['userId']);
@@ -310,6 +291,7 @@ router.get('/score',function(req,res){
     });
 });
 
+/* Create comment at sight */
 router.post('/commentcreate',function(req,res){
     var user_id = Number(req.body.userId);
     var sight_id = Number(req.body.sightId);
@@ -330,6 +312,7 @@ router.post('/commentcreate',function(req,res){
 
 });
 
+/* Return the list of comment */
 router.get('/commentlist',function(req,res){
     var sight_id = Number(req.query['sightId']);
 
@@ -348,10 +331,10 @@ router.get('/commentlist',function(req,res){
     });
 });
 
+/* Return the list of favorite */
 router.get('/favoritelist',function(req,res){
 
     var user_id = Number(req.query['id']);
-
     var find_query = 'select F.sight_id,S.name,S.information,S.picture,S.locationX,S.locationY from favorite F left join sight S on F.sight_id=S.id where F.user_id='+user_id;
 
     sqlconnection.query(find_query, function(err,result){
@@ -366,8 +349,5 @@ router.get('/favoritelist',function(req,res){
         }
     });
 });
-
-
-
 
 module.exports = router;

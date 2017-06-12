@@ -1,15 +1,25 @@
+/******************************************************/
+/*              2017 First semester                   */
+/*      Database Final Project 'Guidit' Back-End      */
+/*    Made By Sohwan Park (github.com/bleetoteelb)    */
+/*         Last modification  2017.06.12              */
+/******************************************************/
+/*                   Plan Routers                     */
+/******************************************************/
+
 var express = require('express');
 var router = express.Router();
 var mysql = require('mysql');
 var mysql_connection = require('./mysql.js');
 var async = require('async');
-
 var sqlconnection = mysql.createConnection( mysql_connection.forconnection() );
 
+/* Respnd default setting */
 router.get('/', function(req, res, next) {
     res.send('respond with a resource');
 });
 
+/* Delete plan from DB */
 router.get('/delete',function(req,res){
 
     var plan_id = req.query['id'];
@@ -30,13 +40,13 @@ router.get('/delete',function(req,res){
 
 });
 
-
+/* Create plan */
 router.post('/create',function(req,res){
     var name = req.body.name;
     var user_id = Number(req.body.id);
     var is_public=0;
-    if(req.body.is_public == true) is_public=0;
-    else is_public=1;
+    if(req.body.is_public == true) is_public=1;
+    else is_public=0;
     var daily_plan = req.body.daily_plan;
     var insert_query = '';
     var insert_query2 = '';
@@ -93,11 +103,7 @@ router.post('/create',function(req,res){
     )
 });
 
-router.post('/modify',function(req,res){
-
-    // to do;
-});
-
+/* Add view count of given plan */
 router.get('/addcount',function(req,res){
     var plan_id = Number(req.query['id']);
 
@@ -119,7 +125,7 @@ router.get('/addcount',function(req,res){
 });
 
 
-
+/* Return detail information of plan */
 router.get('/detail',function(req,res){
     var plan_id = req.query['id'];
 
@@ -199,6 +205,7 @@ router.get('/detail',function(req,res){
 
 });
 
+/* Return the travel plan filtered by id */
 router.get('/list',function(req,res){
     
     var user_id = Number(req.query['id']);
@@ -270,6 +277,7 @@ router.get('/list',function(req,res){
 
 });
 
+/* Insert or update the review of plan */
 router.post('/review',function(req,res){
     
     var daily_plan_id = req.body.id;
@@ -299,7 +307,5 @@ router.post('/review',function(req,res){
         }
     });
 });
-
-
 
 module.exports = router;

@@ -1,3 +1,12 @@
+/******************************************************/
+/*              2017 First semester                   */
+/*      Database Final Project 'Guidit' Back-End      */
+/*    Made By Sohwan Park (github.com/bleetoteelb)    */
+/*         Last modification  2017.06.12              */
+/******************************************************/
+/*                   Index Routers                    */
+/******************************************************/
+
 var express = require('express');
 var router = express.Router();
 
@@ -6,21 +15,19 @@ var mysql_connection = require('./mysql.js');
 var async = require('async');
 var sqlconnection = mysql.createConnection( mysql_connection.forconnection() );
 
-
-var jsonFile = require('jsonfile');
 /* GET home page. */
 router.get('/', function(req, res, next) {
   res.render('index', { title: 'Guidit' });
 });
 
-
-
+/* Return information for main */
+/* Most popular travel plan & sight */
 router.get('/main',function(req,res){
 
     async.waterfall([
         function(callback){
             var return_info
-            var find_query = 'select * from plan order by id limit 1';
+            var find_query = 'select * from plan where id=34';
             sqlconnection.query(find_query,function(err,result){
                 if(err){
                     console.log(err);
@@ -51,11 +58,6 @@ router.get('/main',function(req,res){
         }
     }
     );
-    
-
 });
-
-
-
 
 module.exports = router;

@@ -1,3 +1,12 @@
+/******************************************************/
+/*              2017 First semester                   */
+/*      Database Final Project 'Guidit' Back-End      */
+/*    Made By Sohwan Park (github.com/bleetoteelb)    */
+/*         Last modification  2017.06.12              */
+/******************************************************/
+/*                   Feed Routers                     */
+/******************************************************/
+
 var express = require('express');
 var router = express.Router();
 var mysql = require('mysql');
@@ -5,11 +14,12 @@ var mysql_connection = require('./mysql.js');
 
 var sqlconnection = mysql.createConnection( mysql_connection.forconnection() );
 
-
+/* Respond defalut setting */
 router.get('/', function(req, res, next) {
     res.send('respond with a resource');
 });
 
+/* Create feed */
 router.post('/create',function(req,res){
 
     var id = Number(req.body.id);
@@ -34,6 +44,7 @@ router.post('/create',function(req,res){
     }
 });
 
+/* Delete feed */
 router.get('/delete',function(req,res){
     
     var id = req.query['id'];
@@ -55,8 +66,9 @@ router.get('/delete',function(req,res){
     });    
 });
 
+/* return feed list filtered by given city */
 router.get('/list',function(req,res){
-
+    function sortDesc(a,b) { return b['date']-a['date']; }
     var city = Number(req.query['city']);
 
     if(city<0 || city>8){
@@ -76,7 +88,7 @@ router.get('/list',function(req,res){
                 res.jsonp(err);
             }
             else{
-                    res.jsonp(result);
+                    res.jsonp(result.sort(sortDesc));
             }
         });
     }
@@ -84,37 +96,3 @@ router.get('/list',function(req,res){
 
 
 module.exports = router;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

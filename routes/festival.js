@@ -1,3 +1,11 @@
+/******************************************************/
+/*              2017 First semester                   */
+/*      Database Final Project 'Guidit' Back-End      */
+/*    Made By Sohwan Park (github.com/bleetoteelb)    */
+/*         Last modification  2017.06.12              */
+/******************************************************/
+/*                 Festival Routers                   */
+/******************************************************/
 var express = require('express');
 var router = express.Router();
 var mysql = require('mysql');
@@ -7,12 +15,12 @@ var jsonFile = require('jsonfile');
 
 var sqlconnection = mysql.createConnection( mysql_connection.forconnection() );
 
-/* GET users listing. */
+/* Respnd defalut setting */
 router.get('/', function(req, res, next) {
     res.send('respond with a resource');
 });
 
-/* INSERT festival information */
+/* Insert festival information */
 router.get('/tomysql',function(req,res){
 
     var i=0;
@@ -76,8 +84,7 @@ router.get('/tomysql',function(req,res){
     });
 });
 
-/* festival list */
-
+/* Return festival list filtered by month */
 router.get('/list',function(req,res){
     var month = req.query['month'];
     
@@ -102,20 +109,3 @@ router.get('/list',function(req,res){
 
 
 module.exports = router;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -1,3 +1,12 @@
+/******************************************************/
+/*              2017 First semester                   */
+/*      Database Final Project 'Guidit' Back-End      */
+/*    Made By Sohwan Park (github.com/bleetoteelb)    */
+/*         Last modification  2017.06.12              */
+/******************************************************/
+/*                   User Routers                     */
+/******************************************************/
+
 var express = require('express');
 var router = express.Router();
 var mysql = require('mysql');
@@ -7,22 +16,19 @@ var jsonFile = require('jsonfile');
 var sqlconnection = mysql.createConnection( mysql_connection.forconnection() );
 var multer = require('multer');
 
-/* GET users listing. */
+/* Respond default setting */
 router.get('/', function(req, res, next) {
   res.send('respond with a resource');
 });
 
-
-/*json to mysql*/
-/*
+/* Insert sight information to mysql */
 router.get('/tomysql',function(req,res){
     var filenumber = req.query['number'];
     var filenames = ['./busan.json','./deogu.json','./incheon.json','./junlanam.json','./chungcheongbuk.json','./chungcheongnam.json','./deojeon.json','./gwangju.json','./jeoju.json','./junlabuk.json','./kangwon.json','./kyeongky.json','./kyeongsangbuk.json','./kyeongsangnam.json','./seojong.json','./seoul.json','./ulsan.json']
 
-    for(var jj=0;jj<17;jj++){
     var i=0;
 
-    var category = 'A';// A is sight, B is hotel, C is food, D is truck
+    var category = 'A'; // A is sight, B is hotel, C is food, D is truck
     var image = '';
     var mapx = 0;
     var mapy = 0;
@@ -104,24 +110,22 @@ router.get('/tomysql',function(req,res){
                     insert_query = 'insert into sight (name,location,type,information,picture,locationX,locationY) values ("'+name+'","('+mapx+','+mapy+')","'+category+'","'+information+'","'+image+'","'+mapx+'","'+mapy+'")';
                 }
                 sqlconnection.query(insert_query,function(err,result){
-                        if(err){
-                            console.log(err);
-                            res.jsonp(err);    
-                        }else{
-                            isFinish++;
-                            if(numberofitem == isFinish){
-                                res.jsonp("success");
-                            }    
+                    if(err){
+                        console.log(err);
+                        res.jsonp(err);    
+                    }else{
+                        isFinish++;
+                        if(numberofitem == isFinish){
+                            res.jsonp("success");
                         }
-                })
+                    }
+                });
             }
         }
-    });
+    })
 });
-*/
 
-
-/* change the information of account */
+/* Change the information of account */
 router.post('/setting', function(req,res,next){
     var id = req.body.id;
     var name = req.body.name;
@@ -204,6 +208,4 @@ router.post('/signup',function(req,res){
     });
 });
 
-
-//sqlconnection.end();
 module.exports = router;
